@@ -1,4 +1,4 @@
-# AmmoStats v4.0.0
+# AmmoStats v4.0.1
 Author: RaiRaiTheRaichu
 Additional credits:
 - user/9002-lua on sp-tarkov.com, for some refactoring for languages and adding support for Korean localization!
@@ -43,6 +43,24 @@ All languages should be supported, but the text will still be in english unless 
 See the entry for "kr"/"ru" for a clear example.
 
 If you create a language addition, please PM me on Discord (@RaiRaiTheRaichu) or on forge.sp-tarkov.com (much slower response time) with the information and the mod will be updated and you can be credited.
+
+
+## ---BUILD INFO---
+
+Requirements:
+- .NET 9.0
+
+The following packages installed:
+- SPTarkov.Common (`4.0.0`)
+- SPTarkov.DI (`4.0.0`)
+- SPTarkov.Reflection (`4.0.0`)
+- SPTarkov.Server.Core (`4.0.0`)
+(You can select `Manage NuGet Packages...` within the Dependencies tab of Visual Studio to install them. Pay special attention to the version being installed, mods compiled with packages marked `4.0.13`, for example, will not run on any version below that.)
+
+Open AmmoStats.sln with Visual Studio and build the mod in Release mode.
+Alternatively, run `dotnet build -c Release` from the project directory root.
+
+The output will be stored in the project's `bin\Release\` folder.
 
 
 ## ---INSTALL INFO---
@@ -152,6 +170,9 @@ If you're running the server from a separate folder, please make sure the plugin
 
 #### v4.0.0 Changelog:
 - Complete rewrite for SPT 4.0 in C#, maintaining all of the features from previous versions.
+
+#### v4.0.1 Changelog:
+- Fixed an OS-dependent issue with loading database and config files.
 
 ## ---CONTACT---
 

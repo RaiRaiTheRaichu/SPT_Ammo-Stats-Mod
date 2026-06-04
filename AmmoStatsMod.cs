@@ -17,7 +17,7 @@ namespace AmmoStats
         public override string Name { get; init; } = "AmmoStats";
         public override string Author { get; init; } = "RaiRaiTheRaichu";
         public override List<string>? Contributors { get; init; }
-        public override SemanticVersioning.Version Version { get; init; } = new("4.0.0");
+        public override SemanticVersioning.Version Version { get; init; } = new("4.0.1");
         public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
         public override List<string>? Incompatibilities { get; init; }
         public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
@@ -39,6 +39,8 @@ namespace AmmoStats
         private readonly ModHelper _modHelper = modHelper;
         private readonly ISptLogger<AmmoStatsMod> _logger = logger;
 
+        private readonly char OS_SEPARATOR = System.IO.Path.DirectorySeparatorChar;
+
         private ConfigType ModConfig = new ConfigType();
         private Dictionary<MongoId, AmmoDictionary> AmmoStatDictionary = new();
 
@@ -57,7 +59,7 @@ namespace AmmoStats
         {
             // Load config
             var modPath = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
-            ModConfig = _modHelper.GetJsonDataFromFile<ConfigType>(modPath + "\\config", "config.jsonc");
+            ModConfig = _modHelper.GetJsonDataFromFile<ConfigType>(modPath + OS_SEPARATOR + "config", "config.jsonc");
             
             Dictionary<MongoId, TemplateItem> itemDatabase = _databaseServer.GetTables().Templates.Items;
 
