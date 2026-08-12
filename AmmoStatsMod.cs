@@ -8,39 +8,35 @@ using SPTarkov.Server.Core.Services;
 using System.Reflection;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
+using SPTarkov.Server.Core.Helpers.Server;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
 namespace AmmoStats
 {
-    public record ModMetadata : AbstractModMetadata
+    public record ModMetadata : IModMetadata
     {
-        public override string ModGuid { get; init; } = "com.rairaitheraichu.ammostats";
-        public override string Name { get; init; } = "AmmoStats";
-        public override string Author { get; init; } = "RaiRaiTheRaichu";
-        public override List<string>? Contributors { get; init; }
-        public override SemanticVersioning.Version Version { get; init; } = new("4.0.1");
-        public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.0");
-        public override List<string>? Incompatibilities { get; init; }
-        public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
-        public override string? Url { get; init; } = "https://github.com/RaiRaiTheRaichu/SPT_Ammo-Stats-Mod";
-        public override bool? IsBundleMod { get; init; } = false;
-        public override string? License { get; init; } = "Apache License V2.0";
+        public string ModGuid { get; init; } = "com.rairaitheraichu.ammostats";
+        public string Name { get; init; } = "AmmoStats";
+        public string Author { get; init; } = "RaiRaiTheRaichu";
+        public List<string>? Contributors { get; init; }
+        public SemanticVersioning.Version Version { get; init; } = new("4.1.0");
+        public SemanticVersioning.Range SptVersion { get; init; } = new("~4.1.0");
+        public List<string>? Incompatibilities { get; init; }
+        public Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
+        public string? Url { get; init; } = "https://github.com/RaiRaiTheRaichu/SPT_Ammo-Stats-Mod";
+        public string? License { get; init; } = "Apache License V2.0";
+        public bool HasPrepatcher { get; init; } = false;
     }
-    [Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+    [Injectable(TypePriority = OnLoadOrder.Preload + 1)]
     public class AmmoStatsMod(
-        DatabaseServer databaseServer,
-        DatabaseService databaseService,
-        LocaleService localeService,
+        TemplateTable templateTable,
         ModHelper modHelper,
+        LocaleTable localeTable,
         ISptLogger<AmmoStatsMod> logger) : IOnLoad
     {
-        private readonly DatabaseServer _databaseServer = databaseServer;
-        private readonly DatabaseService _databaseService = databaseService;
-        private readonly LocaleService _localeService = localeService;
-        private readonly ModHelper _modHelper = modHelper;
         private readonly ISptLogger<AmmoStatsMod> _logger = logger;
-
         private readonly char OS_SEPARATOR = System.IO.Path.DirectorySeparatorChar;
-
         private ConfigType ModConfig = new ConfigType();
         private Dictionary<MongoId, AmmoDictionary> AmmoStatDictionary = new();
 
@@ -55,13 +51,13 @@ namespace AmmoStats
         }
         
 
-        public Task OnLoad()
+        public Task OnLoadAsync(CancellationToken cancellationToken)
         {
             // Load config
-            var modPath = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
-            ModConfig = _modHelper.GetJsonDataFromFile<ConfigType>(modPath + OS_SEPARATOR + "config", "config.jsonc");
+            var modPath = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+            ModConfig = modHelper.GetJsonDataFromFile<ConfigType>(modPath + OS_SEPARATOR + "config", "config.jsonc");
             
-            Dictionary<MongoId, TemplateItem> itemDatabase = _databaseServer.GetTables().Templates.Items;
+            Dictionary<MongoId, TemplateItem> itemDatabase = templateTable.Items;
 
             var ammo = itemDatabase.Values.Where(item => item.Properties.AmmoType == "bullet" || item.Properties.AmmoType == "buckshot");
 
@@ -90,7 +86,9 @@ namespace AmmoStats
                    .Select(item => item.Key)
                    .ToList();
             }
-                        
+
+            cancellationToken.ThrowIfCancellationRequested();
+            
             if (ModConfig.enableBulletColoredIcons || ModConfig.enableBoxesColoredIcons)
                 ApplyBackgroundColors();
 
@@ -136,7 +134,7 @@ namespace AmmoStats
 
         internal void ApplyBackgroundColors()
         {
-            Dictionary<MongoId, TemplateItem> itemDatabase = _databaseServer.GetTables().Templates.Items;
+            Dictionary<MongoId, TemplateItem> itemDatabase = templateTable.Items;
 
             bool hexColors = ModConfig.enableExtendedBackgroundColors && GetColorPlugin();
             Dictionary<int, string> ColorProfile = hexColors ? ModConfig.colorProfiles[ModConfig.colorProfile] : ModConfig.backgroundColors;
@@ -172,7 +170,7 @@ namespace AmmoStats
             {
                 foreach (var bulletEntry in AmmoStatDictionary)
                 {
-                    if (_databaseService.GetLocales().Global.TryGetValue(localeEntry.Key, out var lazyloadedValue))
+                    if (localeTable.Global.TryGetValue(localeEntry.Key, out var lazyloadedValue))
                     {
                         string newStatString = "";
                         int stringsToAdd = ModConfig.bulletStats.Amount();
@@ -229,7 +227,7 @@ namespace AmmoStats
 
         internal bool GetColorPlugin()
         {
-            var modPath = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+            var modPath = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
             var bepinexPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(modPath, @"..\..\..\..\BepInEx\"));
 
             var file = Directory.GetFiles(bepinexPath, "RaiRai.ColorConverterAPI.dll", SearchOption.AllDirectories);

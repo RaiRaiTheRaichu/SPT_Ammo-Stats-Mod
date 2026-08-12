@@ -1,4 +1,4 @@
-# AmmoStats v4.0.1
+# AmmoStats v4.1.0
 Author: RaiRaiTheRaichu
 Additional credits:
 - user/9002-lua on sp-tarkov.com, for some refactoring for languages and adding support for Korean localization!
@@ -14,7 +14,7 @@ Additional credits:
 - user/33597-octopussy/ on hub.sp-tarkov.com, for Italian language support!
 - user/27639-manodavis/ on hub.sp-tarkov.com, for Brazilian Portugese language support!
 
-### ---BUILT FOR SPT VERSION 4.0.13---
+### ---BUILT FOR SPT VERSION 4.1.2---
 
 ### Officially deprecated by BSG!
 Ammo stats are being shown in the effect info for each bullet now by default (same as where Bleed chance etc has been shown). That officially means that this mod is no longer required in any form.
@@ -48,13 +48,13 @@ If you create a language addition, please PM me on Discord (@RaiRaiTheRaichu) or
 ## ---BUILD INFO---
 
 Requirements:
-- .NET 9.0
+- .NET 10.0
 
 The following packages installed:
-- SPTarkov.Common (`4.0.0`)
-- SPTarkov.DI (`4.0.0`)
-- SPTarkov.Reflection (`4.0.0`)
-- SPTarkov.Server.Core (`4.0.0`)
+- SPTarkov.Common (`4.1.0`)
+- SPTarkov.DI (`4.1.0`)
+- SPTarkov.Reflection (`4.1.0`)
+- SPTarkov.Server.Core (`4.1.0`)
 (You can select `Manage NuGet Packages...` within the Dependencies tab of Visual Studio to install them. Pay special attention to the version being installed, mods compiled with packages marked `4.0.13`, for example, will not run on any version below that.)
 
 Open AmmoStats.sln with Visual Studio and build the mod in Release mode.
@@ -66,9 +66,9 @@ The output will be stored in the project's `bin\Release\` folder.
 ## ---INSTALL INFO---
 
 How to install:
-Drag and drop the included `SPT` folder from this zip into your game folder, allow it to merge with your existing folder.
+Drag and drop the included `SPT_Runtime` folder from this zip into your game folder, allow it to merge with your existing folder.
 
-If you're updating from an older version of the mod, please be sure to delete the old mod folder from your `SPT/user/mods` folder.
+If you're updating from an older version of the mod, please be sure to delete the old mod folder from your `SPT_Runtime/user/mods` folder.
 
 If you want to enable more color options, please install the Bepinex Color Converter API plugin as well to your BepInEx/plugins/ folder!
 If you're running the server from a separate folder, please make sure the plugin is also located within a BepInEx/plugins/ folder in the same directory - this mod checks for the plugin by the presence of the .dll in order to enable the extended functionality.
@@ -173,6 +173,9 @@ If you're running the server from a separate folder, please make sure the plugin
 
 #### v4.0.1 Changelog:
 - Fixed an OS-dependent issue with loading database and config files.
+
+#### v4.1.0 Changelog:
+- Update for compatibility with SPT 4.1.0+
 
 ## ---CONTACT---
 
