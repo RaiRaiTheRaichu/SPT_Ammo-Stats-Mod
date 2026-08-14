@@ -228,7 +228,7 @@ namespace AmmoStats
         internal bool GetColorPlugin()
         {
             var modPath = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
-            var bepinexPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(modPath, @"..\..\..\..\BepInEx\"));
+            var bepinexPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(modPath, "../../../../BepInEx/"));
 
             var file = Directory.GetFiles(bepinexPath, "RaiRai.ColorConverterAPI.dll", SearchOption.AllDirectories);
             _logger.Info($"[AmmoStats] ColorConverterAPI Plugin detected?: {file.Any()}");
